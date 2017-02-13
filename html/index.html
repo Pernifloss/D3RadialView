@@ -5,6 +5,7 @@
     <title>Title</title>
 </head>
 <script src="http://d3js.org/d3.v4.min.js"></script>
+<script src="../js/d3_radial_view.js"></script>
 
 <body>
 
@@ -27,5 +28,6 @@
             .attr("y", 20)
             .style("text-anchor", "start")
             .attr("stroke", "#654754")
+    svg.append(radialMe(svg));
 </script>
 </html>
