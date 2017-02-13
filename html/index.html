@@ -21,6 +21,11 @@
             .attr("height", height + margin.top + margin.bottom)
             .append("g");
 
+    svg.append("rect")
+        .attr("width", "100%")
+        .attr("height", "100%")
+        .attr("fill", "pink");
+
     svg.append('g')
             .append('text')
             .text("Coucou je suis du text svg")
@@ -29,5 +34,8 @@
             .style("text-anchor", "start")
             .attr("stroke", "#654754")
     svg.append(radialMe(svg));
+
+
+
 </script>
 </html>
