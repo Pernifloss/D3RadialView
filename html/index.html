@@ -12,8 +12,8 @@
 </body>
 <script>
     var margin = {top: 20, right: 20, bottom: 30, left: 20},
-            width = 600 - margin.left - margin.right,
-            height = 300 - margin.top - margin.bottom;
+            width = 1000 - margin.left - margin.right,
+            height = 600 - margin.top - margin.bottom;
 
     var svg = d3.select("body")
             .append("svg")
@@ -21,13 +21,69 @@
             .attr("height", height + margin.top + margin.bottom)
             .append("g");
 
-    svg.append('g')
-            .append('text')
-            .text("Coucou je suis du text svg")
-            .attr("x", 20)
-            .attr("y", 20)
-            .style("text-anchor", "start")
-            .attr("stroke", "#654754")
-    svg.append(radialMe(svg));
+    //createFixture Data
+    var data = [];
+
+    for (var i = 0; i < (1 + Math.random() * 10); i++) {
+        data[i] = {label: "category " + i, "childs": []};
+        for (var j = 0; j < (1 + Math.random() * 10); j++) {
+            data[i].childs[j] = {label: "child " + j}
+        }
+    }
+
+    var firstRadialView = new RadialView(data)
+            .categoryCount(function (data) {
+                return data.length;
+            })
+            .categoryAtPosition(function (data, index) {
+                return data[index];
+            })
+            .categoryLabel(function (category) {
+                return category.label;
+            })
+            .categoryChildren(function (category) {
+                return category.childs;
+            });
+
+
+   firstRadialView.radialMe(svg).attr('transform', 'translate(200,200)');
+
+    //fixture data
+    var secondViewData = {tilte:'dactary'};
+
+    secondViewData.categories = [
+        {"label": "Oeuf", babies: [{"label": "child1"}]}
+        , {"label": "Flan", babies: [{"label": "child1"}, {"label": "child2"}]}
+        , {"label": "Fleur", babies: [{"label": "child1"}, {"label": "child2"}, {"label": "child3"}]}
+        , {
+            "label": "Jaguare",
+            babies: [{"label": "child1"}, {"label": "child2"}, {"label": "child3"}, {"label": "child4"}]
+        }
+        , {
+            "label": "Ficelles",
+            babies: [{"label": "child1"}, {"label": "child2"}, {"label": "child3"}, {"label": "child4"}, {"label": "child5"}]
+        }
+
+    ];
+
+    // create data adapter
+    var secondRadialView = radialView(secondViewData)
+            .categories(function (data) {
+                return data.categories;
+            })
+            .categoryLabel(function (category) {
+                return category.label;
+            })
+            .categoryChildren(function (category) {
+                return category.babies;
+            })
+            .categoryColor(function (category) {
+                return "rgb(103, 189, 67)";
+            });
+
+    // add view to svg
+    secondRadialView.radialMe(svg)
+            .attr('transform', 'translate (500,200)');
+    //    console.log(rad.getItemcount(5));
 </script>
 </html>
