@@ -48,10 +48,10 @@
             });
 
 
-   firstRadialView.radialMe(svg).attr('transform', 'translate(200,200)');
+    firstRadialView.radialMe(svg).attr('transform', 'translate(200,200)');
 
     //fixture data
-    var secondViewData = {tilte:'dactary'};
+    var secondViewData = {tilte: 'dactary'};
 
     secondViewData.categories = [
         {"label": "Oeuf", babies: [{"label": "child1"}]}
@@ -70,25 +70,27 @@
 
     // create data adapter
     var secondRadialView = radialView(secondViewData)
-            .categories(function (data) {
-                return data.categories;
-            })
-            .categoryLabel(function (category) {
-                return category.label;
-            })
-            .categoryChildren(function (category) {
-                return category.babies;
-            })
-            .categoryColor(function (category) {
-                return "rgb(103, 189, 67)";
-            });
+                    //Must set adapter method
+                    .categories(function (data) {
+                        return data.categories;
+                    })
+                    .categoryLabel(function (category) {
+                        return category.label;
+                    })
+                    .categoryChildren(function (category) {
+                        return category.babies;
+                    })
+                    .categoryColor(function (category) {
+                        return "rgb(103, 189, 67)";
+                    })
+                    //can custom stuff
+                    .setWidth(350)
+                    .setDonutWidth(150)
+                    .setCategoryTextColor("#000000")
+                    .setDividerColor("#a0a0a0")
+                    .setDividerSize(3)
+            ;
 
-    // custom stuff
-    secondRadialView.width = 350;
-    secondRadialView.donutWidth = 150;
-    secondRadialView.textcolor = 150;
-    secondRadialView.categoryTextColor = "00ff00";
-    secondRadialView.categoryTextColor = "00ff00";
 
     // add view to svg
     secondRadialView.radialMe(svg)

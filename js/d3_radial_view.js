@@ -4,6 +4,7 @@ function RadialView(data) {
 
 RadialView.prototype.dividerColor = "#ffffff";
 RadialView.prototype.categoryTextColor = "#ffffff";
+RadialView.prototype.dividerSize = 1;
 var colors;
 
 
@@ -59,6 +60,8 @@ RadialView.prototype.radialMe = function (svg) {
             .attr("y1", -outerRadius)
             .attr("y2", -innerRadius)
             .attr("stroke", this.dividerColor)
+            .attr("stroke-width", this.dividerSize)
+
             .attr("transform", "rotate(" + dividerPosition + ")").raise()
 
         radialview.append('text')
@@ -152,3 +155,29 @@ RadialView.prototype.categories = function (d) {
 radialView = function(data){
     return  new RadialView(data)
 }
+
+RadialView.prototype.setWidth  = function (d) {
+    this.width  = d;
+    return this;
+
+};
+RadialView.prototype.setDonutWidth  = function (d) {
+    this.donutWidth  = d
+    return this;
+
+};
+RadialView.prototype.setCategoryTextColor  = function (d) {
+    this.categoryTextColor  = d
+    return this;
+
+};
+RadialView.prototype.setDividerColor  = function (d) {
+    this.dividerColor  = d
+    return this;
+
+};
+RadialView.prototype.setDividerSize  = function (d) {
+    this.dividerSize  = d
+    return this;
+
+};
