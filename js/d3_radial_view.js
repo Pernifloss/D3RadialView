@@ -6,6 +6,5 @@ function radialMe(svg){
         .attr("x", 20)
         .attr("y", 40)
         .style("text-anchor", "start")
-        .attr("stroke", "#654754")
-    return detached;
+        .attr("stroke", "#465754")
 }
