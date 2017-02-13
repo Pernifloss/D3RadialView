@@ -11,29 +11,7 @@
 
 </body>
 <script>
-    var toto = {top: 20, right: 20, bottom: 30, left: 20},
-            width = 600 - toto.left - toto.right,
-            height = 300 - toto.top - toto.bottom;
-
-    var svg = d3.select("body")
-            .append("svg")
-            .attr("width", (width) + toto.left + toto.right)
-            .attr("height", height + toto.top + toto.bottom)
-            .append("g");
-
-    svg.append("rect")
-        .attr("width", "100%")
-        .attr("height", "100%")
-        .attr("fill", "pink");
-
-    svg.append('g')
-            .append('text')
-            .text("Coucou je suis du text pas rose :(")
-            .attr("x", 20)
-            .attr("y", 20)
-            .style("text-anchor", "start")
-            .attr("stroke", "#654754")
-    svg.append(radialMe(svg));
+  var tu_pus;
 
 
 
