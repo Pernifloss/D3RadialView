@@ -2,9 +2,11 @@ function RadialView(data) {
     this.data = data;
 }
 
-var dividerColor = "#ffffff";
-var categoryTextColor = "#ffffff";
+RadialView.prototype.dividerColor = "#ffffff";
+RadialView.prototype.categoryTextColor = "#ffffff";
 var colors;
+
+
 RadialView.prototype.radialMe = function (svg) {
     colors = d3.scaleLinear()
         .domain([0, this.getCategoryCount(this.data)])
@@ -27,13 +29,16 @@ RadialView.prototype.radialMe = function (svg) {
 
     var iterator = 0;
 
-    var pav = this.calculateArcCirclePortionSize(this.getCategoryCount(this.data));
+    var sectionSize = this.calculateArcCirclePortionSize(this.getCategoryCount(this.data));
+
 
     for (var i = 0; i < this.getCategoryCount(this.data); i++) {
-        iterator += ((i + 1) * pav);
+        iterator += ((i + 1) * sectionSize);
 
-        var endAngle = ((i + 1) * pav);
-        var startAngle = (i * pav);
+        var endAngle = ((i + 1) * sectionSize);
+
+        var startAngle = (i * sectionSize);
+
         var myPath = radialview.append("path")
             .datum({endAngle: endAngle, startAngle: startAngle})
             .style("fill", this.getCategoryColor(i))
@@ -45,7 +50,7 @@ RadialView.prototype.radialMe = function (svg) {
 
         var numberPosition = ((-90))
             + (startAngle * toDeg)
-            + (((pav * toDeg)) / 2);
+            + (((sectionSize * toDeg)) / 2);
 
         var dividerPosition = +(startAngle * toDeg);
         radialview.append('line')
@@ -53,7 +58,7 @@ RadialView.prototype.radialMe = function (svg) {
             .attr("x2", 0)
             .attr("y1", -outerRadius)
             .attr("y2", -innerRadius)
-            .attr("stroke", dividerColor)
+            .attr("stroke", this.dividerColor)
             .attr("transform", "rotate(" + dividerPosition + ")").raise()
 
         radialview.append('text')
@@ -63,7 +68,7 @@ RadialView.prototype.radialMe = function (svg) {
             .attr("id", "txt" + i)
             .attr("transform", "rotate(" + numberPosition + ")")
             .style("text-anchor", "center")
-            .attr("fill", categoryTextColor)
+            .attr("fill", this.categoryTextColor)
     }
     radialview.selectAll('line').raise();
     return radialview;
@@ -71,7 +76,7 @@ RadialView.prototype.radialMe = function (svg) {
 
 var R = 2 * Math.PI;
 
-RadialView.prototype.data;
+RadialView.prototype.data = [];
 
 function setData(data) {
     this.data = data;
