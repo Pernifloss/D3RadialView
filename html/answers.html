@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<script src="../d3.js"></script>
+<body>
+
+<script>
+    var height = 100
+    var width = 1000
+
+    var parse = d3.timeParse("%Y-%m-%d %H:%M:%S");
+
+    d3.csv("../json/answers.csv",
+            function (error, rawData) {
+                var netstedData = d3.nest().key(function (d) {
+                    return d.TRAINING_ID
+                }).rollup(
+                        function (d) {
+                            return {
+                                "phaser": d3.nest().key(function (d) {
+                                    return d.PHASE
+                                }).rollup(function (d) {
+                                    return d
+                                }).map(d),
+                                "min": d3.min(d, function (d) {
+                                    return parse(d.ANSWER_DATE)
+                                }),
+                                "max": d3.max(d, function (d) {
+                                    return parse(d.ANSWER_DATE)
+                                }),
+                                "date": parse(d3.map(d, function (d) {
+                                    return d.TRAINING_DATE
+                                }).keys()[0])
+                            }
+
+                        }
+                )
+                        .entries(rawData)
+                d3.select('body')
+                        .selectAll('svg')
+                        .data(netstedData)
+                        .enter()
+                        .append('svg')
+                        .attr('width', width)
+                        .attr('heigth', height)
+                        .each(function (d, i) {
+                            var min;
+                            var max;
+                            if (d.value.date < d.value.min){
+                                min = d.value.date;
+                            }else {
+                                min = d.value.min
+                            }
+                            if (d.value.date > d.value.max){
+                                max = d.value.date;
+                            }else {
+                                max = d.value.max
+                            }
+
+
+                            var scale = d3.scaleTime().range([0, width]).domain([min, max]);
+                            d3.select(this).append('g').call(d3.axisBottom(scale))
+                            d3.select(this).append('line')
+                                    .attr("x1", function (d) {
+                                        return scale(d.date)
+                                    })
+                                    .attr("x2", function (d) {
+                                        return scale(d.date)
+                                    })
+                                    .attr("y1", 0)
+                                    .attr("y2", height)
+
+                                    .attr("stroke-width", 3)
+                                    .attr("stroke", "#000")
+                            console.log(d.value.phaser.get("PRE"));
+                            if (d.value.phaser.get("PRE")) {
+
+                                d3.select(this)
+                                        .selectAll("line")
+                                        .data(d.value.phaser.get("PRE"))
+                                        .enter()
+                                        .append('line')
+                                        .attr("x1", function (d) {
+                                            console.log(d);
+                                            return scale(parse(d.ANSWER_DATE))
+                                        })
+                                        .attr("x2", function (d) {
+                                            return scale(parse(d.ANSWER_DATE))
+                                        })
+                                        .attr("y1", 0)
+                                        .attr("y2", height)
+
+                                        .attr("stroke", "#f00")
+                            }
+                            if (d.value.phaser.get("POST")) {
+                                d3.select(this)
+                                        .selectAll("line")
+                                        .data(d.value.phaser.get("POST"))
+                                        .enter()
+                                        .append('line')
+                                        .attr("x1", function (d) {
+                                            console.log(d);
+                                            return scale(parse(d.ANSWER_DATE))
+                                        })
+                                        .attr("x2", function (d) {
+                                            return scale(parse(d.ANSWER_DATE))
+                                        })
+                                        .attr("y1", 0)
+                                        .attr("y2", height)
+
+                                        .attr("stroke", "#00f")
+                            }
+                        })
+
+
+            }
+    )
+
+</script>
+</body>
+</html>
