@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <link rel="stylesheet" type="text/css" href="../css/stoles-style.css">
+    <title>Title</title>
+</head>
+<script src="../js/d3.js"></script>
+<body>
+
+<script>
+
+    var parse = d3.timeParse("%Y-%m-%d %H:%M:%S");
+    var format = d3.timeFormat("%H")
+
+    function getHours(date) {
+        return parseInt(format(date))
+    }
+    var colors = d3.scaleLinear()
+            .domain([0, 24])
+            .range(['white','blue']);
+
+    var colors2 = d3.scaleLinear()
+            .domain([0, 24])
+            .range(['black','red']);
+
+    function color(g) {
+        return colors((parseInt(g)));
+    }   function color2(g) {
+        return colors2((parseInt(g)));
+    }
+    // set the ranges
+    var  width =1500
+    var height =350
+
+    d3.csv("../json/dyanswer.csv",
+            function (error, rawData) {
+                var x = d3.scaleBand()
+                        .range([0, width])
+                //      .padding(0.1);
+                var svg = d3.select('body').append('svg')
+                        .attr("width", width)
+                        .attr("height", height).append('g')
+
+
+                rawData.forEach(function (d) {
+                    d.TRAINING_DATE = parse(d.TRAINING_DATE)
+                    d.ANSWER_DATE = parse(d.ANSWER_DATE)
+                    d.INTERVAL = d3.timeHour.count( d.ANSWER_DATE,d.ANSWER_DATE)
+                    d.RANGE= d.INTERVAL<-24? -24 : d.INTERVAL <-12? -12 : d.INTERVAL <6? -6 : d.INTERVAL<0? -3 : d.INTERVAL<3? 0 : d.INTERVAL<6 ? 3 : d.INTERVAL <12 ?6 :d.INTERVAL <24 ? 12 :24
+                })
+                x.domain([-24, -12, -6, -3, 0, 3, 6, 12, 24])
+
+                svg.append("g")
+                        .attr("transform", "translate(0," + (height - 50) + ")")
+                        .call(d3.axisBottom(x))
+                var tableDAte = d3.nest().key(function (d) {
+                    return d.PLAYER_ID
+                }).rollup(function (d) {
+                    var hours = d3.nest().key(function (d) {
+                        return getHours(d.ANSWER_DATE)
+                    }).rollup(function (d) {
+                        return d.length
+                    }).entries(d)
+                    hours.sort(function (a, b) {
+                        return +b.value + a.value;
+                    })
+                    return {
+                        "NAME": d3.map(d, function (d) {
+                            return d.NAME.toUpperCase()
+                        }).keys()[0],
+                        "PIE": d3.pie().value(function (d) {
+                            return d.value
+                        })(hours),
+                        "SUM": d3.sum(hours,function(d){
+                            return d.value
+                        }),
+                        "LENGTH": hours.length
+                    }
+                }).entries(rawData)
+            var stats = d3.nest().key(function(d){
+                return d.NAME
+            }).key(function(d){
+                return d.PHASE
+            }).key(function(d){
+                return d.INTERVAL
+            }.rollup(function(d){
+                return d;
+            }).entries(rawData)
+
+                console.log(stats)
+                svg.append()
+                var table = d3.select('body').append('table')
+                var thead = table.append('thead')
+
+
+                var arc = d3.arc()
+                        .innerRadius(0)
+                        .outerRadius(25)
+
+                thead.append('th').html("name")
+                thead.append('th').html("Heure de réponse la plus commune :")
+                table.selectAll('tr').data(tableDAte)
+                        .enter()
+                        .append('tr').each(
+                        function (d) {
+                            d3.select(this).append('td').html(d.value.NAME)
+                            var g = d3.select(this).append('td')
+                                    .append('svg')
+                                    .attr("width", 52)
+                                    .attr("height", 52).append('g')
+                            g.selectAll('path')
+                                    .data(d.value.PIE,function (f) {
+                                        return f.data.index
+                                    })
+                                    .enter().append("path")
+                                    .attr("d", arc)
+                                    .attr("fill", function (g) {
+                                        return color(g.data.key)
+                                    })
+                                    .each(function(d) {this._current = d;} )
+                                    .on('mouseover', function (d) {
+                                        d3.select(this).attr("stroke", "#000000")
+                                    }).on('mouseout', function (d) {
+                                        d3.select(this).attr("stroke", "none")
+                                    }).each(function(g){
+//                                        console.log()
+                                       d3.select(this)  .append('title').html(g.data.key+"h "+((g.value / d.value.SUM)*100).toFixed(1)+"%" )
+                                    }
+
+                            )
+
+//
+                            g.attr("transform", "translate(26,26)")
+//                                    .html(d.value.MAXR + " " + d.value.percentMAxr + "% ")
+                        }
+                )
+            }
+    )
+
+</script>
+</body>
+</html></html>
